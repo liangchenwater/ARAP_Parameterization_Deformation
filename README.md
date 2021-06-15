@@ -1,4 +1,6 @@
 # ARAP_Parameterization_Deformation
+- Commited to 2020-2021 Spring/Summer Zhejiang University Advanced Computer Graphics course.
+- Please do not cheat. For good of both of us.
 - ARAP Deformation and Parameterization.
 - Deformation is interactive.
 - Xcode project. MacOS executable file.
