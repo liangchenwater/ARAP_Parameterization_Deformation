@@ -7,4 +7,5 @@
 - Dependencies: Eigen/igl(No core algorithms about ARAP are used. Only used for user interaction and flip avoid line searching.)/OpenGL/GLFW
 - Some code for user interaction (in call_back.h) adapted from https://github.com/alecjacobson/geometry-processing-deformation
 - image.h and image.cpp adapted from http://10.76.1.181/courses/training/mitF04/assignments/
-- For parameterization '- a'
+- Arguments for parameterization are like: '-function PARAM -input bunny.obj -iterations 4 -method Hybrid 1e-6 -print_pic -print_vtkfile -print_each_frame'
+- Arguments for deformation are like: '-function DEFORM -input bunny.obj -inf_itr'
