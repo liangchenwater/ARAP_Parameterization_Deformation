@@ -10,3 +10,9 @@
 - Arguments for parameterization are like: '-function PARAM -input bunny.obj -iterations 4 -method Hybrid 1e-6 -print_pic -print_vtkfile -print_each_frame'
 - Arguments for deformation are like: '-function DEFORM -input bunny.obj -inf_itr'
 - A strict disk-like manifold check is not included. Please be sure that the input is disk-like so that results are reasonable for PARAM.
+- User interactions when deformation: 
+	- mouse left: select anchor points
+	- mouse drag: deform interactively
+	- press ' ': change between anchor selection mode and deformation mode
+	- press 'u': single update
+	- press 'g': print deformed .obj file
