@@ -16,8 +16,8 @@ void getLaplace(const vector<HalfEdge>& half_edges,const VectorXd& weights,const
     for(int i=0;i<fix.size();i++)
     row_sum(fix[i])=2*beta;
     for(int i=0;i<half_edges.size();i++){
-        int a=half_edges[i].Endpoints(0);
-        int b=half_edges[i].Endpoints(1);
+        long long unsigned int a=half_edges[i].Endpoints(0);
+        long long unsigned int b=half_edges[i].Endpoints(1);
         int inv_idx=half_edges[i].InverseIdx;
         double w=0;
         if(func==PARAM) w=weights(i);
@@ -46,8 +46,8 @@ void getRHS(MatrixXd* R,const vector<HalfEdge>& half_edges,const VectorXd& weigh
     
     if((func==PARAM&&!is_first)||func==DEFORM){
     for(int i=0;i<half_edges.size();i++){
-        int a=half_edges[i].Endpoints(0);
-        int b=half_edges[i].Endpoints(1);
+       long long unsigned int a=half_edges[i].Endpoints(0);
+        long long unsigned  int b=half_edges[i].Endpoints(1);
         int inv_idx=half_edges[i].InverseIdx;
         MatrixXd coeR1;
         MatrixXd coeR2;

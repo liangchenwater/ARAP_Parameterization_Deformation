@@ -41,8 +41,8 @@ void getWeights(const vector<HalfEdge>& half_edges,const MatrixXd& verts,VectorX
         for(int i=0;i<half_edges.size();i++){
             int c=half_edges[i].OppositePoint;
             int inv_idx=half_edges[i].InverseIdx;
-            int a=half_edges[i].Endpoints(0);
-            int b=half_edges[i].Endpoints(1);
+           long long unsigned int a=half_edges[i].Endpoints(0);
+            long long unsigned int b=half_edges[i].Endpoints(1);
             VectorXd edge_for_a=verts.col(c)-verts.col(a);
             VectorXd edge_for_b=verts.col(c)-verts.col(b);
             edge_for_a.normalize();
@@ -173,9 +173,17 @@ void findBoundary(const vector<HalfEdge>& half_edges,const MatrixXi& edges,vecto
             prev=cur;
             cur=i;
             fix.push_back(cur);
+            if(fix.size()>=edges.cols()){
+                cout<<"Model is not disk-like!"<<endl;
+                assert(0);
+            }
             break;
         }
     }
-    fix.erase(fix.end()-1);
+    if(fix.size()<3){
+    cout<<"Model is not disk-like!"<<endl;
+    assert(0);
+    }
+   if(!fix.empty()) fix.erase(fix.end()-1);
 }
 

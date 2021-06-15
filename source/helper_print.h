@@ -150,4 +150,23 @@ inline void printFile(bool print_pic,bool print_vtkfile,bool print_txtfile,bool 
       }
 }
 
+inline void printObjModel(const MatrixXd& res,const MatrixXi& F,string output_name,int num)
+{
+    string itr;
+    int cnt=num;
+    if(cnt==0) itr.push_back('0');
+    while(cnt){
+        itr.push_back(cnt%10+'0');
+        cnt/=10;
+    }
+    for(int i=0;i<itr.size()/2;i++){
+        char tmp=itr[i];
+        itr[i]=itr[itr.size()-1-i];
+        itr[itr.size()-1-i]=tmp;
+    }
+    
+    ofstream Out(output_name+"_"+itr+".obj");
+    for(int i=0;i<res.rows();i++) Out<<"v "<<res.row(i)<<endl;
+    for(int i=0;i<F.rows();i++) Out<<"f "<<F.row(i)+RowVector3i(1,1,1)<<endl;
+}
 #endif /* helper_print_h */

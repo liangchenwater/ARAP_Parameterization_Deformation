@@ -28,7 +28,7 @@ MatrixXd getCovariance3x3(const vector<int>& neighbor,const MatrixXd& verts,cons
     MatrixXd S(3,3);
     S.setZero();
     for(int i=0;i<neighbor.size();i++){
-        double w=weights(cur*verts.cols()+neighbor[i]);
+        double w=weights((long long unsigned)cur*verts.cols()+neighbor[i]);
         S+=w*(now_res.row(cur)-now_res.row(neighbor[i])).transpose()* (verts.col(cur)-verts.col(neighbor[i])).transpose();
     }
     return S;

@@ -9,6 +9,7 @@
 #define helper_init_h
 
 #include "global_var.h"
+#include <sstream>
 
 inline void processArgv(int argc, const char* argv[], string& input_name,int& itrs,int& func,int& method,bool& flip_avoid ,bool& print_txtfile,bool& print_vtkfile,bool& print_pic,bool& print_each_frame,bool& pause,bool& inf_itr,double& lamda,string& slamda)
 {
@@ -88,9 +89,28 @@ inline int readObj(const string& input_name,MatrixXi& F,MatrixXi& edges,MatrixXd
     //the first pass, count verts and facets
 
     while(!input_file.eof()){
-        if(cur=="v") vert_num++;
-        else if(cur=="f") face_num++;
-        getline(input_file,cur);
+        if(cur=="v") {
+            vert_num++;
+            getline(input_file,cur);
+        }
+        else if(cur=="f") {
+            int vert_num_per_face=0;
+            getline(input_file,cur);
+            while(cur[0]==' '&&cur.length()>1) cur=cur.substr(1,cur.length());
+            while(cur.find(" ")!=string::npos&&cur.find(" ")!=cur.length()-1){
+                int i=cur.find(" ");
+                cur=cur.substr(i+1,cur.length());
+                while(cur[0]==' '&&cur.length()>1) cur=cur.substr(1,cur.length());
+                vert_num_per_face++;
+            }
+            vert_num_per_face++;
+            if(vert_num_per_face==3) face_num++;
+            else{
+                cout<<"Only triangle mesh are supported!"<<endl;
+                assert(0);
+            }
+        }
+       else getline(input_file,cur);
         input_file >> cur;
     }
     //initialize matrice
@@ -113,7 +133,7 @@ inline int readObj(const string& input_name,MatrixXi& F,MatrixXi& edges,MatrixXd
     }
         else if(cur=="f"){
             string as,bs,cs;
-            input_file >>as>>bs>>cs;
+            input_file>>as>>bs>>cs;
             int enda=as.length(),endb=bs.length(),endc=cs.length();
             enda=as.find("/");
             endb=bs.find("/");

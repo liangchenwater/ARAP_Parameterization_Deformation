@@ -44,6 +44,7 @@ int main(int argc, const char * argv[]) {
     MatrixXd* R=NULL;
     vector<int> fix;
     vector<VectorXd> fix_vec;
+    string output_name=genOutputName(input_name,method,slamda,flip_avoid);
     
     /*PARAMETERIZATION*/
     if(func==PARAM){
@@ -73,7 +74,6 @@ int main(int argc, const char * argv[]) {
     double *distortion_per_unit=new double[half_edges.size()/3];
     double *aread_per_unit= new double[half_edges.size()/3];
     double *angled_per_unit= new double[half_edges.size()/3];
-    string output_name=genOutputName(input_name,method,slamda,flip_avoid);
     ofstream distortion_file;
     if(print_txtfile) distortion_file.open(output_name+".txt");
     fix.clear();
@@ -103,6 +103,10 @@ int main(int argc, const char * argv[]) {
    local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
         print_each_frame=true;
         printFile(print_pic,print_vtkfile,print_txtfile,print_each_frame,itrs,distortion,aread,angled,output_name,distortion_per_unit,aread_per_unit,angled_per_unit,half_edges,F,res,distortion_file);
+    if(R) delete[] R;
+    if(distortion_per_unit)    delete[] distortion_per_unit;
+    if(aread_per_unit)    delete[] aread_per_unit;
+    if(angled_per_unit)  delete[] angled_per_unit;
    return 0;
 }
     
@@ -113,6 +117,7 @@ int main(int argc, const char * argv[]) {
     bool first=true;
     long sel=-1;
     int now_itr=0;
+    int print_num=0;
     bool moved=false;
     bool changed=false;
     RowVector3f last_mouse(0,0,0);
@@ -135,7 +140,7 @@ int main(int argc, const char * argv[]) {
     igl::opengl::glfw::Viewer viewer;
     callbackMouseDown mouseDown(&placing_handles,&now_itr,&last_mouse,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&changed,&sel,&dir_solver);
     callbackMouseMove mouseMove(&fix_vec,&last_mouse,&moved,&sel,&now_itr);
-    callbackKeyPressed keyPressed(&placing_handles,&now_itr,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&changed,&Laplace,&dir_solver);
+    callbackKeyPressed keyPressed(&placing_handles,&now_itr,&print_num,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&changed,&Laplace,&dir_solver,output_name);
     callbackPreDraw preDraw(&placing_handles,&now_itr,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&pause,&inf_itr,&dir_solver);
     viewer.callback_mouse_down=mouseDown;
     viewer.callback_mouse_move=mouseMove;
@@ -149,6 +154,8 @@ int main(int argc, const char * argv[]) {
     viewer.data().set_vertices(res);
     viewer.data().set_colors(RowVector3d(1.0,0.9,0.2));
     viewer.launch(true,false,"deformation",256,256);
+    if(R) delete[] R;
+    if(neighbors) delete[] neighbors;
     return EXIT_SUCCESS;
     }
 }

@@ -9,6 +9,7 @@
 #define call_back_h
 
 #include "global_var.h"
+#include "helper_print.h"
 #include "ARAP.h"
 
 inline void updateViewer(igl::opengl::glfw::Viewer& viewer, int& itr, bool placing_handles, MatrixXd* R, vector<int>* neighbors,const MatrixXd& verts,const vector<HalfEdge>& half_edges, const VectorXd& weights, vector<int>& fix,vector<VectorXd>& fix_vec,MatrixXd& RHS,bool& first,bool moved, MatrixXd& res,SimplicialLDLT<SparseMatrix<double> >& dir_solver)
@@ -45,7 +46,7 @@ inline void updateViewer(igl::opengl::glfw::Viewer& viewer, int& itr, bool placi
    }
    viewer.data().compute_normals();
  };
-    
+
 
 class callbackMouseDown{
 public:
@@ -187,6 +188,11 @@ bool operator()(igl::opengl::glfw::Viewer & viewer, unsigned int key, int mod)
        }
         updateViewer(viewer,*itr,*placing_handles, R, neighbors,*verts,*half_edges, *weights, *fix,*fix_vec,*RHS,*first,*moved,*res,*dir_solver);
        break;
+       case 'G':
+       case 'g':
+           printObjModel(*res,*F,output_name,*num);
+           *num=(*num)+1;
+           break;
      default:
        return false;
    }
@@ -194,6 +200,7 @@ bool operator()(igl::opengl::glfw::Viewer & viewer, unsigned int key, int mod)
  }
     callbackKeyPressed(bool* placing_handles,
                        int* itr,
+                       int* num,
                       MatrixXd* res,
                       vector<int>* fix,
                       vector<VectorXd>* fix_vec,
@@ -208,11 +215,13 @@ bool operator()(igl::opengl::glfw::Viewer & viewer, unsigned int key, int mod)
                        bool* moved,
                        bool* changed,
                       SparseMatrix<double>* Laplace,
-                      SimplicialLDLT<SparseMatrix<double>>* dir_solver
-                      ):placing_handles(placing_handles),itr(itr),res(res),fix(fix),fix_vec(fix_vec),R(R),neighbors(neighbors),verts(verts),half_edges(half_edges),weights(weights),RHS(RHS),F(F),first(first),Laplace(Laplace),dir_solver(dir_solver),moved(moved),changed(changed){}
+                      SimplicialLDLT<SparseMatrix<double>>* dir_solver,
+                       string output_name
+                      ):placing_handles(placing_handles),itr(itr),res(res),fix(fix),fix_vec(fix_vec),R(R),neighbors(neighbors),verts(verts),half_edges(half_edges),weights(weights),RHS(RHS),F(F),first(first),Laplace(Laplace),dir_solver(dir_solver),moved(moved),changed(changed),output_name(output_name),num(num){}
 private:
     bool* placing_handles;
     int *itr;
+    int *num;
     MatrixXd* res;
     vector<int>* fix;
     vector<VectorXd>* fix_vec;
@@ -228,6 +237,7 @@ private:
     bool* changed;
     SparseMatrix<double> *Laplace;
     SimplicialLDLT<SparseMatrix<double>>* dir_solver;
+    string output_name;
 };
 
 class callbackPreDraw{
