@@ -16,4 +16,4 @@
 	- press ' ': change between anchor selection mode and deformation mode
 	- press 'u': single update
 	- press 'g': print deformed .obj file
-- For more data, including results and models, please refer to BAIDU Cloud Disk: https://pan.baidu.com/s/1_ObT-NQUKhNzIlSJ6tfFCw  password: aaaa
+- For more data, including results and models, please refer to BAIDU Cloud Disk: https://pan.baidu.com/s/1_ObT-NQUKhNzIlSJ6tfFCw  password: elto
