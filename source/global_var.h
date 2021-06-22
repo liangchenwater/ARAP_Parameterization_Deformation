@@ -31,9 +31,10 @@
 #include <opencv2/highgui.hpp>
 #include "image.h"
 #define beta 50000
-#define eps 1e-4
+#define eps 1e-6
 #define newton_step_size 0.5
 #define MAX_NEWTON_ITRS 200
+#define inf_for_bfr 1e20
 
 using namespace std;
 using namespace Eigen;

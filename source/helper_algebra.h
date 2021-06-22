@@ -18,6 +18,8 @@ MatrixXd getCovariance2x2(const vector<HalfEdge>& half_edges,const MatrixXd& now
 
 void newton_optimizerNto1(VectorXd& x,std::function<VectorXd(const VectorXd&)> compute_J,std::function<MatrixXd(const VectorXd&)> compute_H);
 
+void binary_find_root(double& x, std::function<double(double)>);
+
 class R_Jacobian{
 public:
     VectorXd operator()(const VectorXd& x)

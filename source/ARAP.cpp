@@ -145,14 +145,22 @@ void local_phase_param(MatrixXd* R,const vector<HalfEdge>& half_edges,const Matr
                 C2+=weights(i*3+j)*(u(0)*v(0)+u(1)*v(1));
                 C3+=weights(i*3+j)*(u(0)*v(1)-u(1)*v(0));
             }
+            /*
             VectorXd init(2);
             init(0)=init(1)=1;
             R_Jacobian R_J(lamda,C1,C2,C3);
             R_Hessian R_H(lamda,C1);
-            newton_optimizerNto1(init,R_J,R_H);
-            R[i](0,0)=R[i](1,1)=init(0);
-            R[i](0,1)=init(1);
-            R[i](1,0)=-init(1);
+            newton_optimizerNto1(init,R_J,R_H);*/
+            double entry_1=0;
+            double coe3=2*lamda*(1+C3*C3/C2/C2),coe1=C1-2*lamda,coe0=-C2;
+            std::function<double(double)> cubic_fun=[&](double x)->double
+            {
+                return coe3*x*x*x+coe1*x+coe0;
+            };
+            binary_find_root(entry_1,cubic_fun);
+            R[i](0,0)=R[i](1,1)=entry_1;
+            R[i](0,1)=entry_1*C3/C2;
+            R[i](1,0)=-entry_1*C3/C2;
         }
         distortion_per_unit[i]= area(i)* ( ( (J-R[i]).transpose() )*(J-R[i]) ).trace() ;
         aread_per_unit[i]=area(i)*(singular_value(0)*singular_value(1)+1.0/singular_value(0)/singular_value(1));

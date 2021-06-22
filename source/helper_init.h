@@ -36,6 +36,10 @@ inline void processArgv(int argc, const char* argv[], string& input_name,int& it
                 assert(i<argc);
                 slamda=argv[i];
                 lamda=atof(argv[i]);
+                if(lamda<0){
+                    cout<<"Lambda of the Hybrid method must be positive!"<<endl;
+                    assert(0);
+                }
             }
             else {
                 cout<<"Invalid method specified!"<<endl;

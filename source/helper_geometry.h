@@ -20,5 +20,5 @@ void isometricProj(vector<HalfEdge>& half_edges);
 
 void findBoundary(const vector<HalfEdge>& half_edges,const MatrixXi& edges,vector<int>& fix);
 
-void normalize_to_one(MatrixXd& res);
+MatrixXd normalize_to_one2D(const MatrixXd& res);
 #endif /* helper_geometry_h */

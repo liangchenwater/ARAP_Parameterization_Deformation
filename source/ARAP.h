@@ -64,14 +64,22 @@ public:
                     C2+=weights(i*3+j)*(u(0)*v(0)+u(1)*v(1));
                     C3+=weights(i*3+j)*(u(0)*v(1)-u(1)*v(0));
                 }
+                /*
                 VectorXd init(2);
                 init(0)=init(1)=1;
                 R_Jacobian R_J(lamda,C1,C2,C3);
                 R_Hessian R_H(lamda,C1);
-                newton_optimizerNto1(init,R_J,R_H);
-                L(0,0)=L(1,1)=init(0);
-                L(0,1)=init(1);
-                L(1,0)=-init(1);
+                newton_optimizerNto1(init,R_J,R_H);*/
+                double entry_1=0;
+                double coe3=2*lamda*(1+C3*C3/C2/C2),coe1=C1-2*lamda,coe0=-C2;
+                std::function<double(double)> cubic_fun=[&](double x)->double
+                {
+                    return coe3*x*x*x+coe1*x+coe0;
+                };
+                binary_find_root(entry_1,cubic_fun);
+                L(0,0)=L(1,1)=entry_1;
+                L(0,1)=entry_1*C3/C2;
+                L(1,0)=-entry_1*C3/C2;
             }
             E+=area(i)* ( ( (J-L).transpose() )*(J-L) ).trace() ;
         }

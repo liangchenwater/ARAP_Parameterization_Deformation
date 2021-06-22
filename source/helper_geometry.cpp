@@ -187,8 +187,9 @@ void findBoundary(const vector<HalfEdge>& half_edges,const MatrixXi& edges,vecto
    if(!fix.empty()) fix.erase(fix.end()-1);
 }
 
-void normalize_to_one(MatrixXd& res)
+MatrixXd normalize_to_one2D(const MatrixXd& res)
 {
+    MatrixXd normalized_res(res.rows(),2);
     double xmax=-1e16,ymax=-1e16,xmin=1e16,ymin=1e16;
     //normalize the coordinates to (0,1) x (0,1)
     for(int i=0;i<res.rows();i++){
@@ -200,8 +201,9 @@ void normalize_to_one(MatrixXd& res)
     RowVector2d Min(xmin,ymin);
     double scale=1.0/std::max((xmax-xmin),(ymax-ymin));
     for(int i=0;i<res.rows();i++){
-        res.row(i)=(res.row(i)-Min)*scale;
-        if(std::max((xmax-xmin),(ymax-ymin))==xmax-xmin) res(i,1)+=0.5*(1.0-scale*(ymax-ymin));
-        else res(i,0)+=0.5*(1.0-scale*(xmax-xmin));
+        normalized_res.row(i)=(res.row(i)-Min)*scale;
+        if(std::max((xmax-xmin),(ymax-ymin))==xmax-xmin) normalized_res(i,1)+=0.5*(1.0-scale*(ymax-ymin));
+        else normalized_res(i,0)+=0.5*(1.0-scale*(xmax-xmin));
     }
+    return normalized_res;
 }

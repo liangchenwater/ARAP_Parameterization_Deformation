@@ -65,7 +65,6 @@ int main(int argc, const char * argv[]) {
     assert(dir_solver.info()==Success);
     res.resize(vert_num,2);
     res=dir_solver.solve(RHS);
-    normalize_to_one(res);
         
     /*Preparation for ARAP*/
     isometricProj(half_edges);
@@ -79,7 +78,7 @@ int main(int argc, const char * argv[]) {
     double *aread_per_unit= new double[half_edges.size()/3];
     double *angled_per_unit= new double[half_edges.size()/3];
     ofstream distortion_file;
-    if(print_txtfile) distortion_file.open(output_name+".txt");
+    if(!show_texture&&print_txtfile) distortion_file.open(output_name+".txt");
     fix.clear();
     fix_vec.clear();
     srand((unsigned int)time(NULL));
@@ -91,8 +90,9 @@ int main(int argc, const char * argv[]) {
     dir_solver.factorize(Laplace);
     assert( dir_solver.info()==Success);
     ARAP_energy E(half_edges,weights,area,method,lamda);
-    MatrixXd new_res(vert_num,2);
     if(show_texture){
+        MatrixXd texture(res.rows(),2);
+        texture=normalize_to_one2D(res);
         //read img using openCV
         cv::Mat img = imread(texture_name, cv::IMREAD_COLOR);
         if(img.empty())
@@ -114,8 +114,8 @@ int main(int argc, const char * argv[]) {
             if(key==' '){
             local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
             global_phase(R,half_edges,weights,fix,fix_vec,RHS,func,false,res,dir_solver);
-            normalize_to_one(res);
-            viewer.data().set_uv(res,F);
+            texture=normalize_to_one2D(res);
+            viewer.data().set_uv(texture,F);
             for(int i=0;i<fix.size();i++)
             fix_vec[i]=res.row(fix[i]).transpose();
             return true;
@@ -124,7 +124,7 @@ int main(int argc, const char * argv[]) {
         };
         viewer.data().set_mesh(verts.transpose(),F);
         viewer.data().set_vertices(verts.transpose());
-        viewer.data().set_uv(res,F);
+        viewer.data().set_uv(texture,F);
         viewer.data().show_lines = false;
         viewer.data().show_texture=true;
         viewer.data().set_texture(Red,Green,Blue);
@@ -133,6 +133,7 @@ int main(int argc, const char * argv[]) {
         viewer.launch(true,false,"show_texture",256,256);
     }
     else{
+    MatrixXd new_res(vert_num,2);
     for(int now_itr=0;now_itr<itrs;now_itr++){
         //local phase: given p', solve R
         local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
@@ -143,7 +144,6 @@ int main(int argc, const char * argv[]) {
         else res=new_res;
         for(int i=0;i<fix.size();i++)
         fix_vec[i]=res.row(fix[i]).transpose();
-        normalize_to_one(res);
     }
     //The final "local optimization" in order to get the final energy
    local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);

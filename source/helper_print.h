@@ -10,6 +10,7 @@
 
 #include "global_var.h"
 #include "image.h"
+#include "helper_geometry.h"
 
 inline void printVTK(const vector<HalfEdge>& half_edges, const MatrixXi& F,double* distortion,
                                              double* aread,double * angled,const MatrixXd& res ,string output_name)
@@ -76,14 +77,14 @@ inline void printImage(const vector<HalfEdge>& half_edges,const MatrixXd& res,st
     int width=4000,height=4000;
     Image pic(width,height);
     MatrixXd normalized_res(res.rows(),2);
-    normalized_res.fill(0);
+    normalized_res=normalize_to_one2D(res);
     Vector3d white(1.0,1.0,1.0);
     pic.SetAllPixels(white);
     //cout<<xmax<<endl<<xmin<<endl<<ymax<<endl<<ymin<<endl;
     double screen_size=std::min(width,height);
     double scale=1.0*(screen_size-1);
     for(int i=0;i<res.rows();i++){
-        normalized_res.row(i)=res.row(i)*scale;
+        normalized_res.row(i)=normalized_res.row(i)*scale;
         //cout<<normalized_res.row(i)<<endl;
         if(screen_size==height) normalized_res(i,0)+=0.5*(width-screen_size);
         else normalized_res(i,1)+=0.5*(height-screen_size);
@@ -150,5 +151,6 @@ inline void printObjModel(const MatrixXd& res,const MatrixXi& F,string output_na
     ofstream Out(output_name+"_"+itr+".obj");
     for(int i=0;i<res.rows();i++) Out<<"v "<<res.row(i)<<endl;
     for(int i=0;i<F.rows();i++) Out<<"f "<<F.row(i)+RowVector3i(1,1,1)<<endl;
+    Out.close();
 }
 #endif /* helper_print_h */

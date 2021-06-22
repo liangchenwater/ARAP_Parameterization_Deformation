@@ -6,6 +6,29 @@
 //
 
 #include "helper_algebra.h"
+//it's not a general solver, but for the cubic function in the local step of Hybrid method, it surely works
+void binary_find_root(double& x, std::function<double(double)> fun)
+{
+    x=0;
+    double y=fun(x);
+    double left=0,right=0;
+    if(y<-eps){
+        left=x;
+        right=inf_for_bfr;
+    }
+    else if(y>eps){
+        right=x;
+        left=-inf_for_bfr;
+    }
+    else return;
+    while(right-left>eps){
+         x=(left+right)/2;
+         y=fun(x);
+        if(y<-eps) left=x;
+        else if(y>eps) right=x;
+        else return;
+    }
+}
 
 void newton_optimizerNto1(VectorXd& x,std::function<VectorXd(const VectorXd&)> compute_J,std::function<MatrixXd(const VectorXd&)> compute_H)
 {
