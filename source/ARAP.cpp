@@ -163,7 +163,6 @@ void local_phase_param(MatrixXd* R,const vector<HalfEdge>& half_edges,const Matr
     }
 }
 
-
 void global_phase(MatrixXd* R,const vector<HalfEdge>& half_edges, const VectorXd& weights, const vector<int>& fix,const vector<VectorXd>& fix_vec,MatrixXd& RHS,int func,bool first, MatrixXd& res,SimplicialLDLT<SparseMatrix<double> >& dir_solver)
 {
     getRHS(R,half_edges,weights,fix,fix_vec,RHS,func,first);

@@ -77,32 +77,14 @@ inline void printImage(const vector<HalfEdge>& half_edges,const MatrixXd& res,st
     Image pic(width,height);
     MatrixXd normalized_res(res.rows(),2);
     normalized_res.fill(0);
-    double xmax=-1e16,ymax=-1e16,xmin=1e16,ymin=1e16;
     Vector3d white(1.0,1.0,1.0);
     pic.SetAllPixels(white);
-    //normalize the coordinates to (0,1) x (0,1)
-    for(int i=0;i<res.rows();i++){
-        if(res(i,0)<xmin) xmin=res(i,0);
-        if(res(i,0)>xmax) xmax=res(i,0);
-        if(res(i,1)<ymin) ymin=res(i,1);
-        if(res(i,1)>ymax) ymax=res(i,1);
-    }
     //cout<<xmax<<endl<<xmin<<endl<<ymax<<endl<<ymin<<endl;
     double screen_size=std::min(width,height);
-    double scale=1.0*(screen_size-1)/std::max((xmax-xmin),(ymax-ymin));
-   // cout<<scale<<endl;
-   // double xscale=1.0*(screen_size-1)/(xmax-xmin);
-  //  double yscale=1.0*(screen_size-1)/(ymax-ymin);
-    RowVector2d Min(xmin,ymin);
+    double scale=1.0*(screen_size-1);
     for(int i=0;i<res.rows();i++){
-        normalized_res.row(i)=(res.row(i)-Min)*scale;
+        normalized_res.row(i)=res.row(i)*scale;
         //cout<<normalized_res.row(i)<<endl;
-        if(std::max((xmax-xmin),(ymax-ymin))==xmax-xmin){
-            normalized_res(i,1)+=0.5*(screen_size-scale*(ymax-ymin));
-        }
-        else{
-            normalized_res(i,0)+=0.5*(screen_size-scale*(xmax-xmin));
-        }
         if(screen_size==height) normalized_res(i,0)+=0.5*(width-screen_size);
         else normalized_res(i,1)+=0.5*(height-screen_size);
     }

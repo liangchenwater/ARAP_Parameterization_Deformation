@@ -11,7 +11,7 @@
 #include "global_var.h"
 #include <sstream>
 
-inline void processArgv(int argc, const char* argv[], string& input_name,int& itrs,int& func,int& method,bool& flip_avoid ,bool& print_txtfile,bool& print_vtkfile,bool& print_pic,bool& print_each_frame,bool& pause,bool& inf_itr,double& lamda,string& slamda)
+inline void processArgv(int argc, const char* argv[], string& input_name,int& itrs,int& func,int& method,bool& flip_avoid ,bool& print_txtfile,bool& print_vtkfile,bool& print_pic,bool& print_each_frame,bool& pause,bool& inf_itr,bool& show_texture,string& texture_name,double& lamda,string& slamda)
 {
     assert(argc>=1);
     for(int i=1;i<argc;i++){
@@ -72,6 +72,12 @@ inline void processArgv(int argc, const char* argv[], string& input_name,int& it
         }
         else if(!strcmp(argv[i],"-inf_itr")){
             inf_itr=true;
+        }
+        else if(!strcmp(argv[i],"-show_texture")){
+            show_texture=true;
+            i++;
+            assert(i<argc);
+            texture_name=argv[i];
         }
         else{
             cout<<"Invalid input arguments specified!"<<endl;

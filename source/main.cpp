@@ -25,9 +25,11 @@ int main(int argc, const char * argv[]) {
     bool print_each_frame=false;
     bool pause=false;
     bool inf_itr=false;
+    bool show_texture=false;
+    string texture_name;
     double lamda=0;
     string slamda="0";
-    processArgv(argc,argv,input_name,itrs,func,method,flip_avoid,print_txtfile,print_vtkfile,print_pic,print_each_frame,pause,inf_itr,lamda,slamda);
+    processArgv(argc,argv,input_name,itrs,func,method,flip_avoid,print_txtfile,print_vtkfile,print_pic,print_each_frame,pause,inf_itr,show_texture,texture_name,lamda,slamda);
     MatrixXd verts;
     MatrixXi edges;
     vector<HalfEdge> half_edges;
@@ -45,6 +47,7 @@ int main(int argc, const char * argv[]) {
     vector<int> fix;
     vector<VectorXd> fix_vec;
     string output_name=genOutputName(input_name,method,slamda,flip_avoid);
+    igl::opengl::glfw::Viewer viewer;
     
     /*PARAMETERIZATION*/
     if(func==PARAM){
@@ -62,7 +65,8 @@ int main(int argc, const char * argv[]) {
     assert(dir_solver.info()==Success);
     res.resize(vert_num,2);
     res=dir_solver.solve(RHS);
-      
+    normalize_to_one(res);
+        
     /*Preparation for ARAP*/
     isometricProj(half_edges);
     getWeights(half_edges,verts,weights,Cotangent_1);
@@ -88,6 +92,47 @@ int main(int argc, const char * argv[]) {
     assert( dir_solver.info()==Success);
     ARAP_energy E(half_edges,weights,area,method,lamda);
     MatrixXd new_res(vert_num,2);
+    if(show_texture){
+        //read img using openCV
+        cv::Mat img = imread(texture_name, cv::IMREAD_COLOR);
+        if(img.empty())
+        {
+            std::cout << "Could not read the image: " << texture_name << std::endl;
+            assert(0);
+        }
+        int width=img.cols,height=img.rows;
+        Matrix<unsigned char,Dynamic,Dynamic> Red(width,height),Green(width,height),Blue(width,height);
+        for(int x=0;x<width;x++)
+        for(int y=0;y<height;y++){
+            cv::Vec3b color=img.at<cv::Vec3b>(cv::Point(x,y));
+            Red(x,y)=color[2];
+            Green(x,y)=color[1];
+            Blue(x,y)=color[0];
+        }
+        viewer.callback_key_pressed= [&](igl::opengl::glfw::Viewer &, unsigned int key, int)->bool
+        {
+            if(key==' '){
+            local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
+            global_phase(R,half_edges,weights,fix,fix_vec,RHS,func,false,res,dir_solver);
+            normalize_to_one(res);
+            viewer.data().set_uv(res,F);
+            for(int i=0;i<fix.size();i++)
+            fix_vec[i]=res.row(fix[i]).transpose();
+            return true;
+            }
+            return false;
+        };
+        viewer.data().set_mesh(verts.transpose(),F);
+        viewer.data().set_vertices(verts.transpose());
+        viewer.data().set_uv(res,F);
+        viewer.data().show_lines = false;
+        viewer.data().show_texture=true;
+        viewer.data().set_texture(Red,Green,Blue);
+        viewer.data().set_colors(RowVector3d(0.825,0.825,0.825));
+        viewer.core().is_animating = true;
+        viewer.launch(true,false,"show_texture",256,256);
+    }
+    else{
     for(int now_itr=0;now_itr<itrs;now_itr++){
         //local phase: given p', solve R
         local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
@@ -98,11 +143,14 @@ int main(int argc, const char * argv[]) {
         else res=new_res;
         for(int i=0;i<fix.size();i++)
         fix_vec[i]=res.row(fix[i]).transpose();
+        normalize_to_one(res);
     }
     //The final "local optimization" in order to get the final energy
    local_phase_param(R,half_edges,res,weights,area,method,lamda,distortion_per_unit,aread_per_unit,angled_per_unit,distortion,aread,angled);
         print_each_frame=true;
         printFile(print_pic,print_vtkfile,print_txtfile,print_each_frame,itrs,distortion,aread,angled,output_name,distortion_per_unit,aread_per_unit,angled_per_unit,half_edges,F,res,distortion_file);
+    }
+        
     if(R) delete[] R;
     if(distortion_per_unit)    delete[] distortion_per_unit;
     if(aread_per_unit)    delete[] aread_per_unit;
@@ -137,7 +185,6 @@ int main(int argc, const char * argv[]) {
     RHS.resize(vert_num,3);
     for(int i=0;i<vert_num;i++) res.row(i)=verts.col(i).transpose();
     //set viewer. The code of initial guess and ARAP optimizations for deformation is in the file call_back.h
-    igl::opengl::glfw::Viewer viewer;
     callbackMouseDown mouseDown(&placing_handles,&now_itr,&last_mouse,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&changed,&sel,&dir_solver);
     callbackMouseMove mouseMove(&fix_vec,&last_mouse,&moved,&sel,&now_itr);
     callbackKeyPressed keyPressed(&placing_handles,&now_itr,&print_num,&res,&fix,&fix_vec,R,neighbors,&verts,&half_edges,&weights,&RHS,&F,&first,&moved,&changed,&Laplace,&dir_solver,output_name);

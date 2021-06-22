@@ -191,7 +191,7 @@ Image* Image::Compare(Image* img1, Image* img2) {
   return img3;
 }
 
-/*
+
 Image* Image::LoadImage(const char* filename)
 {
         cv::Mat img = imread(filename, cv::IMREAD_COLOR);
@@ -211,4 +211,3 @@ Image* Image::LoadImage(const char* filename)
     }
     return answer;
 }
-*/

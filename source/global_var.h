@@ -7,7 +7,7 @@
 
 #ifndef global_var_h
 #define global_var_h
-
+#define STB_IMAGE_IMPLEMENTATION
 #include <iostream>
 #include <vector>
 #include <cstring>
@@ -27,6 +27,8 @@
 #include <igl/opengl/glfw/Viewer.h>
 #include <igl/snap_points.h>
 #include <igl/unproject_onto_mesh.h>
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/highgui.hpp>
 #include "image.h"
 #define beta 50000
 #define eps 1e-4

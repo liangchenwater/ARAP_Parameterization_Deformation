@@ -9,16 +9,16 @@
 #define ARAP_h
 
 #include "helper_algebra.h"
-
+#include "helper_geometry.h"
 void getLaplace(const vector<HalfEdge>& half_edges,const VectorXd& weights,const vector<int>& fix, SparseMatrix<double>& Laplace,int func);
 
 void getRHS(MatrixXd* R,const vector<HalfEdge>& half_edges,const VectorXd& weights,const vector<int>& fix, const vector<VectorXd>& fix_vec,MatrixXd& RHS,int func,bool is_first);
 
 void local_phase_deform(MatrixXd* R,vector<int>* neighbors,const MatrixXd& verts,const MatrixXd& res, const VectorXd& weights);
 
-void local_phase_param(MatrixXd* R,const vector<HalfEdge>& half_edges,const MatrixXd& res,const VectorXd& weights,const VectorXd& area,int method,double lamda,double * distortion_per_unit,double* aread_per_unit,double *angled_per_unit,double& distortion,double& aread,double& angled);\
+void local_phase_param(MatrixXd* R,const vector<HalfEdge>& half_edges,const MatrixXd& res,const VectorXd& weights,const VectorXd& area,int method,double lamda,double * distortion_per_unit,double* aread_per_unit,double *angled_per_unit,double& distortion,double& aread,double& angled);
 
-void global_phase(MatrixXd* R,const vector<HalfEdge>& half_edges, const VectorXd& weights, const vector<int>& fix,const vector<VectorXd>& fix_vec,MatrixXd& RHS,int func,bool first, MatrixXd& new_res,SimplicialLDLT<SparseMatrix<double> >& dir_solver);
+void global_phase (MatrixXd* R,const vector<HalfEdge>& half_edges, const VectorXd& weights, const vector<int>& fix,const vector<VectorXd>& fix_vec,MatrixXd& RHS,int func,bool first, MatrixXd& new_res,SimplicialLDLT<SparseMatrix<double> >& dir_solver);
 
 class ARAP_energy{
 public:
