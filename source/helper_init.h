@@ -83,6 +83,7 @@ inline void processArgv(int argc, const char* argv[], string& input_name,int& it
             cout<<"Invalid input arguments specified!"<<endl;
         }
     }
+    if(func==DEFORM) method=ARAP;
 }
 
 inline int readObj(const string& input_name,MatrixXi& F,MatrixXi& edges,MatrixXd& verts,vector<HalfEdge>& half_edges,VectorXd& area)
